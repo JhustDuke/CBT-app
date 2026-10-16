@@ -1,0 +1,25 @@
+{
+	"name": "cbt-ext",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"scripts": {
+		"dev:ext": "web-ext run",
+		"dev:cs": "vite build --watch --config vite.config.cs.ts",
+		"dev:main": "vite build --watch --config vite.config.main.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@types/jquery": "^4.0.1",
+		"axios": "^1.13.5",
+		"jquery": "^4.0.0",
+		"xtension-messenger": "^2.1.9"
+	},
+	"devDependencies": {
+		"@types/firefox-webext-browser": "^143.0.0",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.0"
+	}
+}

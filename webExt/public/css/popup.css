@@ -1,0 +1,17 @@
+@import url("bootstrap.css");
+@import url("colors.css");
+
+.btn {
+	width: 100px;
+}
+
+.tabContent {
+	display: none;
+}
+
+.active {
+	background-color: black !important;
+}
+.show {
+	display: block;
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>JAMB/CBT MOCK</title>
+		<link
+			rel="shortcut icon"
+			href="/"
+			type="image/x-icon" />
+		<link
+			rel="stylesheet"
+			href="css/popup.css" />
+		<!-- jQuery CDN -->
+		<!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> -->
+	</head>
+	<body class="w-100">
+		<div
+			id="app"
+			class="grey lighten-4">
+			<center class="grey lighten-3 p-3">
+				<h3 class="fw-bold text-capitalize w-50">JAMB CBT HELPER</h3>
+			</center>
+			<div
+				style="width: 400px; height: 400px"
+				class="container">
+				<div class="d-flex p-3 justify-content-center grey lighten-4">
+					<!-- tab Buttons -->
+					<button
+						class="btn text-uppercase btn-primary mx-2"
+						id="recvdBtn"
+						>received</button
+					>
+					<button
+						class="btn text-uppercase btn-primary default-tab"
+						id="initBtn"
+						>init</button
+					>
+				</div>
+				<!-- tab contents -->
+				<div
+					id="viewContainer"
+					class="mx-auto border border-3 p-2">
+					<!-- recieved btn content -->
+					<section
+						id="recvdContents"
+						class="tabContent show"
+						>this is received view</section
+					>
+					<!-- init Contents -->
+					<section
+						id="initContents"
+						class="tabContent">
+						<div class="d-flex p-3 gap-3">
+							<!-- Left column: inputs and button -->
+							<div
+								class="flex-shrink-0"
+								style="width: 200px">
+								<label
+									for="queryNumber"
+									class="form-label"
+									>Number of Query:</label
+								>
+								<input
+									type="number"
+									id="queryNumber"
+									class="form-control mb-3"
+									min="1"
+									max="10"
+									placeholder="Enter number" />
+								<button
+									id="fetchDataBtn"
+									class="btn btn-primary w-75"
+									>Fetch Data</button
+								>
+							</div>
+
+							<!-- Right column: fetch outcome -->
+							<div
+								id="fetchOutcome"
+								class="flex-grow-1 border p-3"
+								style="min-height: 150px">
+								<!-- Outcome of fetch will appear here -->
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+
+		<script
+			src="popup.js"
+			type="module"></script>
+	</body>
+</html>
