@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0" />
+		<title>CBT App - Data Consumption Simulation</title>
+		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+	</head>
+	<body class="bg-gray-100">
+		<header class="bg-gray-900 p-5 text-white">
+			<div
+				class="mx-auto flex max-w-6xl flex-col justify-between gap-4 sm:flex-row sm:items-center">
+				<h1 class="text-2xl font-bold">CBT App</h1>
+				<nav class="flex flex-wrap gap-3">
+					<a
+						href="./index.html"
+						class="rounded px-4 py-2 hover:bg-gray-700">
+						Data Collation Page
+					</a>
+					<a
+						href="./consumption.html"
+						class="rounded bg-blue-600 px-4 py-2 font-semibold">
+						Data Consumption Simulation
+					</a>
+				</nav>
+			</div>
+		</header>
+
+		<main class="mx-auto max-w-3xl p-4">
+			<section class="rounded-lg bg-white p-6 shadow">
+				<h2 class="mb-6 text-center text-xl font-bold uppercase">
+					Enrolment Data Simulation
+				</h2>
+
+				<form
+					id="consumptionForm"
+					class="space-y-4">
+					<!-- Passport remains first -->
+					<div class="text-center">
+						<div
+							class="mx-auto mb-2 h-[200px] w-[200px] border-[6px] border-black">
+							<img
+								id="img"
+								alt="Candidate passport"
+								class="h-full w-full" />
+						</div>
+						<label
+							for="passport"
+							class="mb-1 block"
+							>Candidate Passport</label
+						>
+						<input
+							id="passport"
+							type="file"
+							accept="image/*"
+							class="w-full rounded border p-2" />
+					</div>
+
+					<!-- Reordered fields -->
+					<div>
+						<label
+							for="course"
+							class="mb-1 block"
+							>Course</label
+						>
+						<select
+							id="course"
+							class="w-full rounded border bg-white p-2">
+							<option
+								value=""
+								selected
+								disabled
+								>Select course</option
+							>
+							<option>Medicine</option>
+							<option>Engineering</option>
+							<option>Fine Art</option>
+							<option>Law</option>
+						</select>
+					</div>
+
+					<div>
+						<label
+							for="phone"
+							class="mb-1 block"
+							>Phone Number</label
+						>
+						<input
+							id="phone"
+							type="tel"
+							placeholder="Candidate phone number"
+							class="w-full rounded border p-2" />
+					</div>
+
+					<div>
+						<label
+							for="fullName"
+							class="mb-1 block"
+							>Full Name</label
+						>
+						<input
+							id="fullName"
+							type="text"
+							placeholder="Candidate full name"
+							class="w-full rounded border p-2" />
+					</div>
+
+					<div>
+						<label
+							for="email"
+							class="mb-1 block"
+							>Email Address</label
+						>
+						<input
+							id="email"
+							type="email"
+							placeholder="Candidate email"
+							class="w-full rounded border p-2" />
+					</div>
+
+					<button
+						type="button"
+						class="w-full rounded bg-blue-600 p-3 text-white hover:bg-blue-700">
+						Simulate Data Consumption
+					</button>
+				</form>
+			</section>
+		</main>
+	</body>
+</html>

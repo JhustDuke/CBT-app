@@ -1,20 +1,17 @@
 import $ from "jquery";
-import { checkDomElems } from "../utils";
-import { domElems } from "./domElems";
-import { tabController } from "./tabController";
-import { fetchBtnMethods } from "./popupfetchDataMethod";
 
-$(function () {
-	try {
-		checkDomElems(domElems);
+import { oneTimeMsgFactory } from "xtension-messenger";
 
-		// Attach all events first
-		tabController.initEvent();
-		fetchBtnMethods.initEvent();
+const popup = oneTimeMsgFactory("popup");
 
-		// Default tab
-		tabController.activate(domElems.defaultBtn);
-	} catch (err: any) {
-		console.error(err.message);
-	}
+$("button").click(function () {
+	popup.messageBackgroundScript({
+		message: { type: "wake-up" },
+		errorCb(error) {
+			console.log(error);
+		},
+		successCb(response) {
+			console.log(response);
+		},
+	});
 });
