@@ -1,0 +1,12 @@
+{
+	"name": "cbt-ext",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"scripts": {
+		"dev:firefox": "web-ext run",
+		"dev:cs": "cd webExt && vite build --watch --config vite.config.cs.ts",
+		"dev:main": "cd webExt && vite build --watch --config vite.config.main.ts",
+		"dev:chrome": "cd webExt && web-ext run --target=chromium"
+	}
+}

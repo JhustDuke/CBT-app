@@ -19,8 +19,9 @@
 
 	"content_scripts": [
 		{
-			"matches": ["<all_urls>"],
-			"js": ["dist/contentScript.js"]
+			"matches": ["*://*/*consumption.html"],
+			"js": ["dist/contentScript.js"],
+			"css": ["dist/css/contentscript.css"]
 		}
 	],
 

@@ -18,12 +18,28 @@ import {
 	emitCustomEvent,
 } from "../utils";
 
+import { showActionButton } from "./actionBtnAndModal/actionBtn";
+
 const cs = oneTimeMsgFactory("cs");
 
 cs.onMessageSync({
 	onSyncCb(message) {
-		console.log(message);
-
+		console.log("message", message);
 		return "i received your message ";
 	},
 });
+
+document.addEventListener("dblclick", function () {
+	cs.messageBackgroundScript({
+		messageToSend: { type: "UP" },
+		errorCb(error) {
+			console.log("error", error.errorMessage);
+		},
+		successCb(response) {
+			console.log("response", response);
+		},
+	});
+	showActionButton();
+});
+
+///////////

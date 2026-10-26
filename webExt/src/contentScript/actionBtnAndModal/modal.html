@@ -1,0 +1,98 @@
+<!-- =========================
+     Modal Overlay
+========================= -->
+<div
+	id="ext-actionModal"
+	class="auxie-overlay">
+	<!-- =========================
+         Modal Container
+    ========================= -->
+	<div class="auxie-modal">
+		<!-- =========================
+             Passport Preview Section
+        ========================= -->
+		<div class="auxie-passport">
+			<img
+				src="#"
+				alt="No pics available"
+				class="auxie-passport-img" />
+
+			<!-- =========================
+                 Counter
+            ========================= -->
+			<div
+				id="ext-enrolCounter"
+				class="auxie-counter"
+				>0 / 0</div
+			>
+
+			<button
+				class="auxie-btn auxie-btn-success auxie-btn-sm"
+				id="modalDownloadBtn"
+				disabled>
+				Download Image
+			</button>
+		</div>
+
+		<!-- =========================
+             Status Select
+        ========================= -->
+		<h5 class="auxie-title">Select Status</h5>
+		<select
+			id="ext-statusSelect"
+			class="auxie-input">
+			<option value="success">Success</option>
+			<option value="error">Error</option>
+		</select>
+
+		<!-- =========================
+             Error Reason
+        ========================= -->
+		<div class="auxie-reason">
+			<input
+				type="text"
+				id="ext-errorReason"
+				placeholder="type in reason"
+				class="auxie-input d-none" />
+			<p
+				id="errorText"
+				class="auxie-error-text d-none">
+				supply error reason (5 words min)
+			</p>
+		</div>
+
+		<!-- =========================
+             Action Buttons
+        ========================= -->
+		<div class="auxie-actions">
+			<button
+				id="ext-submitStatusBtn"
+				class="auxie-btn auxie-btn-danger"
+				>Submit</button
+			>
+			<button
+				id="ext-closeModalBtn"
+				class="auxie-btn auxie-btn-secondary"
+				>Close</button
+			>
+		</div>
+
+		<!-- =========================
+             Prev Button
+        ========================= -->
+		<button
+			id="ext-prevBtn"
+			class="auxie-btn auxie-btn-dark auxie-side-btn auxie-side-prev"
+			>prev</button
+		>
+
+		<!-- =========================
+             Next Button
+        ========================= -->
+		<button
+			id="ext-nextBtn"
+			class="auxie-btn auxie-btn-dark auxie-side-btn auxie-side-next"
+			>next</button
+		>
+	</div>
+</div>
