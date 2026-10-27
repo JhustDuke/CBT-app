@@ -1,17 +1,61 @@
 import $ from "jquery";
-
+import { messageType } from "../utils";
+import { FormDataInterface } from "../interfaces";
 import { oneTimeMsgFactory } from "xtension-messenger";
 
 const popup = oneTimeMsgFactory("popup");
 
-$("button").click(function () {
+// hides every part of the outcome box
+function hideEverythingInOutcomeBox() {
+	$("#fetchPlaceholder").addClass("d-none");
+	$("#fetchLoading").addClass("d-none");
+	$("#fetchResult").addClass("d-none");
+}
+
+$("#fetchDataBtn").click(function () {
+	// 1. disable the button
+	$("#fetchDataBtn").prop("disabled", true);
+
+	// 2. show the spinner
+	hideEverythingInOutcomeBox();
+	$("#fetchLoading").removeClass("d-none");
+
 	popup.messageBackgroundScript({
-		message: { type: "wake-up" },
-		errorCb(error) {
-			console.log(error);
-		},
+		messageToSend: { type: messageType.getData },
 		successCb(response) {
-			console.log(response);
+			const receivedRecords = response.data as FormDataInterface[];
+
+			// stop the spinner
+			hideEverythingInOutcomeBox();
+
+			// enable the button
+			$("#fetchDataBtn").prop("disabled", false);
+
+			// show the cards
+			$("#receivedCount").text(
+				"Received " + receivedRecords.length + " records"
+			);
+			const cardsContainer = $("#receivedCards").empty();
+			for (const record of receivedRecords) {
+				cardsContainer.append(
+					$('<div class="card p-2"></div>').text(record.phoneNumber)
+				);
+			}
+			$("#fetchResult").removeClass("d-none");
+		},
+		errorCb(error) {
+			// stop the spinner
+			hideEverythingInOutcomeBox();
+
+			// enable the button
+			$("#fetchDataBtn").prop("disabled", false);
+
+			// placeholder text becomes the error message, in red
+			$("#fetchPlaceholder")
+				.text(error.errorMessage ?? "something went ")
+				.removeClass("text-muted")
+				.addClass("text-danger")
+				.removeClass("d-none");
 		},
 	});
 });

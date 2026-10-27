@@ -1,5 +1,5 @@
 export const messageType = {
-	startCrawler: "start_crawler",
+	getData: "get_data",
 	getBackendData: "backend_data",
 	fetchSize: 5,
 	getNextEnrol: "get_next_enrol",
