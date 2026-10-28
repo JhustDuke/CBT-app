@@ -37,9 +37,11 @@ $("#fetchDataBtn").click(function () {
 			);
 			const cardsContainer = $("#receivedCards").empty();
 			for (const record of receivedRecords) {
-				cardsContainer.append(
-					$('<div class="card p-2"></div>').text(record.phoneNumber)
-				);
+				const card = $('<div class="card p-2"></div>');
+				for (const [key, value] of Object.entries(record)) {
+					card.append($("<div></div>").text(`${key}: ${value}`));
+				}
+				cardsContainer.append(card);
 			}
 			$("#fetchResult").removeClass("d-none");
 		},

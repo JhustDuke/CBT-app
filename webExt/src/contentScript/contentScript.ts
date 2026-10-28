@@ -15,83 +15,68 @@ import {
 	emitCustomEvent,
 } from "../utils";
 
-import { showActionButton } from "./actionBtnAndModal/actionBtn";
+import { showActionButton, actionModalStore } from "./actionBtnAndModal";
 
 const cs = oneTimeMsgFactory("cs");
 
 // Central app
 
 const ContentScript = function () {
-	const startListening = function () {
-		cs.onMessageSync({
-			validateMessage(message) {
-				return message.type === messageType.getData;
-			},
+	const renderer = createRenderer();
+	const cleanup = createCleanup();
 
-			onSyncCb(message: ExtensionMessageInterface) {
-				console.log("CS: message received", message);
-
-				const receivedRecords = message.payload as Partial<FormDataInterface>[];
+	const handleMessage = function (message: ExtensionMessageInterface) {
+		switch (message.type) {
+			case messageType.getData: {
+				const receivedRecords = message.payload as FormDataInterface[];
 
 				console.log("CS: records received", receivedRecords);
 
-				showActionButton();
+				// Store first, so the modal can read the records the moment the button shows.
+				actionModalStore.setRecords(receivedRecords);
+				renderer.showDataReceived();
 
 				return `received ${receivedRecords.length} records`;
-			},
+			}
+
+			default:
+				throw new Error(
+					`cs has no handler found for this message type: ${message.type}`
+				);
+		}
+	};
+
+	const start = function () {
+		cleanup.run();
+
+		cs.onMessageSync({
+			onSyncCb: handleMessage,
 		});
 
 		console.log("CS: listener registered");
 	};
 
-	return { startListening };
+	return { start };
 };
 
-ContentScript().startListening();
+ContentScript().start();
 
-function createStateFactory() {
-	return {};
-}
-
+// Only touches the screen: toast and action button.
 function createRenderer() {
-	return {};
-}
-
-function createEventOrchestrator() {
-	return {};
-}
-
-function createStateActions() {
-	return {};
-}
-
-function createMessaging() {
-	// e.g. expectedMessageType = "exampleType"
-	const listenForMsgs = function (listenerOptions: {
-		expectedMessageType: string;
-		messageHandler: (message: ExtensionMessageInterface) => unknown;
-	}) {
-		cs.onMessageSync({
-			validateMessage(message) {
-				return message.type === listenerOptions.expectedMessageType;
-			},
-			onSyncCb(message) {
-				return listenerOptions.messageHandler(message);
-			},
-		});
+	const showDataReceived = function () {
+		notifyToast({ type: "success", text: "gotten data", timeoutMs: 6000 });
+		showActionButton();
 	};
 
-	return { listenForMsgs };
-}
-
-function createFormController() {
-	return {};
-}
-
-function createEventController() {
-	return {};
+	return { showDataReceived };
 }
 
 function createCleanup() {
-	return {};
+	const run = function () {
+		cleanupAll(
+			'[class^="auxie-"], [class*=" auxie-"], [id^="auxie"], [name^="auxie"]'
+		);
+	};
+
+	return { run };
 }

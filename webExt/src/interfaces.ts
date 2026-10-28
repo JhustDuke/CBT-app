@@ -1,11 +1,10 @@
 export interface FormDataInterface {
-	fullName?: string;
-	email?: string;
-	phone?: string;
-	course?: string;
-	phoneNumber: string;
+	fullName: string;
+	email: string;
+	phone: string;
+	course: string;
 	imageFileHash: string;
-	imageFile?: any;
+	imageFile: any;
 }
 export interface UpdateEnrolStatusPayloadInterface {
 	phoneNumber: string;

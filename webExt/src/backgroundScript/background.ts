@@ -18,7 +18,9 @@ const bgScript = function () {
 				}
 
 				default:
-					throw new Error("no handler found for this message type");
+					throw new Error(
+						`bg has no handler found for this message type,${message.type}`
+					);
 			}
 		} catch (err: any) {
 			console.error(err.message);
@@ -38,14 +40,24 @@ const bgScript = function () {
 bgScript().startListening();
 
 // fake records until the real api request is wired in
-function requestRecordsFromApi(): Promise<Partial<FormDataInterface>[]> {
+function requestRecordsFromApi(): Promise<FormDataInterface[]> {
 	return new Promise(function (resolve) {
 		// 3 second delay mimics the real request
 		setTimeout(function () {
-			const fakeRecords: Partial<FormDataInterface>[] = [];
+			const fakeRecords: FormDataInterface[] = [];
 
 			for (let recordNumber = 1; recordNumber <= 3; recordNumber++) {
-				fakeRecords.push({ phoneNumber: "080000000" + recordNumber });
+				fakeRecords.push({
+					fullName: "Test Candidate " + recordNumber,
+					email: "candidate" + recordNumber + "@example.com",
+					phone: "0900000000" + recordNumber,
+					course: "Computer Science",
+
+					imageFileHash: "fakehash" + recordNumber,
+					// tiny 1x1 placeholder image as base64
+					imageFile:
+						"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+				});
 			}
 
 			resolve(fakeRecords);
@@ -53,7 +65,7 @@ function requestRecordsFromApi(): Promise<Partial<FormDataInterface>[]> {
 	});
 }
 
-function sendDataToCS(receivedRecords: Partial<FormDataInterface>[]) {
+function sendDataToCS(receivedRecords: FormDataInterface[]) {
 	return new Promise(function (resolve) {
 		bg.messageContentScript({
 			tabQueryProps: {
