@@ -48,6 +48,7 @@
 				gap: 0.5rem;
 			">
 			<img
+				id="ext-passportImage"
 				src="#"
 				alt="No pics available"
 				style="
@@ -144,7 +145,6 @@
 				type="text"
 				id="ext-errorReason"
 				placeholder="type in reason"
-				class="d-none"
 				style="
 					display: block;
 					width: 100%;
@@ -161,10 +161,16 @@
 					appearance: none;
 					box-sizing: border-box;
 				" />
+
 			<p
 				id="errorText"
-				class="d-none"
-				style="margin-top: 0; margin-bottom: 1rem; color: #dc3545">
+				style="
+					margin-top: 0;
+					margin-bottom: 1rem;
+					color: #dc3545;
+					display: none;
+					width: 100%;
+				">
 				supply error reason (5 words min)
 			</p>
 		</div>
