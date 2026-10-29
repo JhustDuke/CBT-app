@@ -10,7 +10,7 @@ export function showActionButton(): void {
 
 	const actionButton = document.createElement("button");
 	actionButton.id = ACTION_BUTTON_ID;
-	actionButton.className = "auxie-btn auxie-float-btn";
+	actionButton.className = "auxie-btn";
 	actionButton.textContent = "Run Auxie";
 	actionButton.addEventListener("click", showModal);
 	document.body.appendChild(actionButton);
