@@ -6,6 +6,13 @@ import { messageType } from "../utils";
 
 const bg = oneTimeMsgFactory("bg");
 
+// what the modal reports for one candidate
+interface ResultToReportInterface {
+	phone: string;
+	status: string;
+	errorReason: string;
+}
+
 // Central app
 const bgScript = function () {
 	const handleMessage = async function (message: ExtensionMessageInterface) {
@@ -17,9 +24,15 @@ const bgScript = function () {
 					return receivedRecords;
 				}
 
+				case messageType.markCandidate: {
+					const resultToReport = message.payload as ResultToReportInterface;
+					await saveResultToApi(resultToReport);
+					return true;
+				}
+
 				default:
 					throw new Error(
-						`bg has no handler found for this message type,${message.type}`
+						`bg has no handler for this message type,${message.type}`
 					);
 			}
 		} catch (err: any) {
@@ -61,6 +74,22 @@ function requestRecordsFromApi(): Promise<FormDataInterface[]> {
 			}
 
 			resolve(fakeRecords);
+		}, 3000);
+	});
+}
+
+// fake save until the real api request is wired in; error status mimics a failed save
+function saveResultToApi(
+	resultToReport: ResultToReportInterface
+): Promise<boolean> {
+	return new Promise(function (resolve, reject) {
+		// 3 second delay mimics the real request
+		setTimeout(function () {
+			if (resultToReport.status === "error") {
+				reject(new Error("mock bg failed to save the result"));
+				return;
+			}
+			resolve(true);
 		}, 3000);
 	});
 }

@@ -4,7 +4,7 @@ function createActionModalStore() {
 	let records: FormDataInterface[] = [];
 	let currentRecordIndex = 0;
 
-	// ---- write side: only the cs calls these ----
+	// ---- write side: the cs and the modal call these ----
 
 	// a new batch replaces the old one and goes back to the first candidate
 	function setRecords(newRecords: FormDataInterface[]): void {
@@ -26,6 +26,22 @@ function createActionModalStore() {
 	// stays on the first candidate when there is no previous one
 	function goToPreviousRecord(): void {
 		if (currentRecordIndex > 0) {
+			currentRecordIndex--;
+		}
+	}
+
+	// drops the current candidate; the same position now shows the next one
+	function removeCurrentRecord(): void {
+		const remainingRecords: FormDataInterface[] = [];
+		for (let recordIndex = 0; recordIndex < records.length; recordIndex++) {
+			if (recordIndex !== currentRecordIndex) {
+				remainingRecords.push(records[recordIndex]);
+			}
+		}
+		records = remainingRecords;
+
+		// removed the last one: step back so the index stays valid
+		if (currentRecordIndex > records.length - 1 && currentRecordIndex > 0) {
 			currentRecordIndex--;
 		}
 	}
@@ -58,6 +74,7 @@ function createActionModalStore() {
 		setRecords,
 		goToNextRecord,
 		goToPreviousRecord,
+		removeCurrentRecord,
 		getCurrentRecord,
 		getCurrentRecordNumber,
 		getTotalRecords,

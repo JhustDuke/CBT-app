@@ -36,12 +36,13 @@ const ContentScript = function () {
 				actionModalStore.setRecords(receivedRecords);
 				renderer.showDataReceived();
 
-				return `received ${receivedRecords.length} records`;
+				console.log(`received ${receivedRecords.length} records`);
+				return true;
 			}
 
 			default:
 				throw new Error(
-					`cs has no handler found for this message type: ${message.type}`
+					`cs has no handler for this message type: ${message.type}`
 				);
 		}
 	};
@@ -49,8 +50,8 @@ const ContentScript = function () {
 	const start = function () {
 		cleanup.run();
 
-		cs.onMessageSync({
-			onSyncCb: handleMessage,
+		cs.onMessageAsync({
+			onAsyncCb: handleMessage,
 		});
 
 		console.log("CS: listener registered");
