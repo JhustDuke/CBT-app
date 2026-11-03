@@ -62,6 +62,22 @@ const renderCurrentRecord = function (): void {
 	if (nextButton) nextButton.disabled = !actionModalStore.hasNextRecord();
 };
 
+// removes Auxie's population pills and clears the fields they populated
+const removePills = function (): void {
+	document.querySelectorAll(".ext-pill").forEach(function (pill) {
+		const previousElement = pill.previousElementSibling;
+
+		if (
+			previousElement instanceof HTMLInputElement ||
+			previousElement instanceof HTMLSelectElement
+		) {
+			previousElement.value = "";
+		}
+
+		pill.remove();
+	});
+};
+
 // shows the reason input only for error status; submit stays disabled until the reason is long enough
 const updateErrorReasonState = function (): void {
 	const statusSelectElement = document.getElementById(
@@ -128,122 +144,15 @@ const closeModal = function (modalElement: HTMLElement): void {
 };
 
 const navigatePreviousRecord = function (): void {
+	removePills();
 	actionModalStore.goToPreviousRecord();
 	updateModalUi();
 };
 
 const navigateNextRecord = function (): void {
+	removePills();
 	actionModalStore.goToNextRecord();
 	updateModalUi();
-};
-
-// bg saved the result: drop the candidate and move on
-const handleBgSuccess = function (
-	modalElement: HTMLElement,
-	statusSelectElement: HTMLSelectElement,
-	errorReasonInputElement: HTMLInputElement,
-	submitStatusButtonElement: HTMLButtonElement,
-	originalButtonText: string | null,
-	replyTimeoutId: ReturnType<typeof setTimeout>
-): void {
-	if (!isWaitingForBg) return; // the timeout already released it
-	clearTimeout(replyTimeoutId);
-	isWaitingForBg = false;
-	submitStatusButtonElement.textContent = originalButtonText;
-
-	actionModalStore.removeCurrentRecord();
-	if (actionModalStore.getTotalRecords() === 0) {
-		// release the freeze before hiding, so the next open isn't stuck
-		updateModalUi();
-		modalElement.style.display = "none";
-		return;
-	}
-
-	// next candidate starts clean
-	statusSelectElement.value = "success";
-	errorReasonInputElement.value = "";
-	updateModalUi();
-};
-
-// bg failed: the candidate stays so the agent can retry
-const handleBgError = function (
-	errorMessage: string,
-	submitStatusButtonElement: HTMLButtonElement,
-	originalButtonText: string | null,
-	replyTimeoutId: ReturnType<typeof setTimeout>
-): void {
-	if (!isWaitingForBg) return;
-	clearTimeout(replyTimeoutId);
-	isWaitingForBg = false;
-	submitStatusButtonElement.textContent = originalButtonText;
-	updateModalUi();
-	notifyToast({ type: "error", text: errorMessage, timeoutMs: 6000 });
-};
-
-const submitCandidateStatus = function (
-	modalElement: HTMLElement,
-	statusSelectElement: HTMLSelectElement,
-	errorReasonInputElement: HTMLInputElement,
-	submitStatusButtonElement: HTMLButtonElement
-): void {
-	if (isWaitingForBg) return;
-
-	const currentRecord = actionModalStore.getCurrentRecord();
-	if (currentRecord === null) return;
-
-	// original text e.g. "Submit", put back when bg replies
-	const originalButtonText = submitStatusButtonElement.textContent;
-	submitStatusButtonElement.textContent = "Please wait...";
-
-	isWaitingForBg = true;
-	updateModalUi();
-
-	const BG_REPLY_TIMEOUT_MS = 15000;
-
-	// safety net: if bg never replies, release the pause
-	const replyTimeoutId = setTimeout(function () {
-		if (!isWaitingForBg) return;
-		isWaitingForBg = false;
-		submitStatusButtonElement.textContent = originalButtonText;
-		updateModalUi();
-		notifyToast({
-			type: "error",
-			text: "no reply from bg, try again",
-			timeoutMs: 6000,
-		});
-	}, BG_REPLY_TIMEOUT_MS);
-
-	const resultToReport = {
-		phone: currentRecord.phone,
-		status: statusSelectElement.value,
-		errorReason: errorReasonInputElement.value.trim(),
-	};
-
-	// built before the record is removed
-	actionModalInCs.messageBackgroundScript({
-		messageToSend: {
-			type: messageType.markCandidate,
-			payload: resultToReport,
-		},
-		successCb() {
-			handleBgSuccess(
-				modalElement,
-				statusSelectElement,
-				errorReasonInputElement,
-				submitStatusButtonElement,
-				originalButtonText,
-				replyTimeoutId
-			);
-		},
-		errorCb(error) {
-			handleBgError(
-				error.errorMessage ?? "failed to save the result",
-				submitStatusButtonElement,
-				originalButtonText,
-				replyTimeoutId
-			);
-		},
-	});
 };
 
 const registerModalEvents = function (modalElement: HTMLElement): void {
@@ -274,12 +183,99 @@ const registerModalEvents = function (modalElement: HTMLElement): void {
 	errorReasonInputElement.addEventListener("input", updateModalUi);
 
 	submitStatusButtonElement.addEventListener("click", function () {
-		submitCandidateStatus(
-			modalElement,
-			statusSelectElement,
-			errorReasonInputElement,
-			submitStatusButtonElement
-		);
+		// ignore clicks while a request is already running
+		if (isWaitingForBg) return;
+
+		const currentRecord = actionModalStore.getCurrentRecord();
+		if (currentRecord === null) return;
+
+		// original text e.g. "Submit", put back when the request ends
+		const originalButtonText = submitStatusButtonElement.textContent;
+
+		// start waiting: change the text and freeze the modal
+		submitStatusButtonElement.textContent = "Please wait...";
+		isWaitingForBg = true;
+		updateModalUi();
+
+		// built before the record is removed
+		const resultToReport = {
+			phone: currentRecord.phone,
+			status: statusSelectElement.value,
+			errorReason: errorReasonInputElement.value.trim(),
+		};
+
+		const BG_REPLY_TIMEOUT_MS = 15000;
+
+		// safety net: if bg never replies, end the wait the same way an error does
+		const replyTimeoutId = setTimeout(function () {
+			// 1. stop waiting and put the button text back
+			isWaitingForBg = false;
+			submitStatusButtonElement.textContent = originalButtonText;
+
+			// 2. the candidate stays so the agent can retry; refresh to unfreeze
+			updateModalUi();
+
+			// 3. tell the agent bg is silent
+			notifyToast({
+				type: "error",
+				text: "no reply from bg, try again",
+				timeoutMs: 6000,
+			});
+		}, BG_REPLY_TIMEOUT_MS);
+
+		actionModalInCs.messageBackgroundScript({
+			messageToSend: {
+				type: messageType.markCandidate,
+				payload: resultToReport,
+			},
+			successCb() {
+				// 1. the timeout already ended this request, so ignore the late reply
+				if (!isWaitingForBg) return;
+
+				// 2. bg replied in time, so cancel the timeout
+				clearTimeout(replyTimeoutId);
+
+				// 3. stop waiting and put the button text back
+				isWaitingForBg = false;
+				submitStatusButtonElement.textContent = originalButtonText;
+
+				// 4. bg saved the result, so drop this candidate from the list
+				actionModalStore.removeCurrentRecord();
+
+				// 5. next candidate starts clean
+				statusSelectElement.value = "success";
+				errorReasonInputElement.value = "";
+
+				// 6. refresh the modal, this also unfreezes it
+				updateModalUi();
+
+				// 7. that was the last candidate, so hide the modal
+				if (actionModalStore.getTotalRecords() === 0) {
+					modalElement.style.display = "none";
+				}
+			},
+			errorCb(error) {
+				// 1. the timeout already ended this request, so ignore the late reply
+				if (!isWaitingForBg) return;
+
+				// 2. bg replied in time, so cancel the timeout
+				clearTimeout(replyTimeoutId);
+
+				// 3. stop waiting and put the button text back
+				isWaitingForBg = false;
+				submitStatusButtonElement.textContent = originalButtonText;
+
+				// 4. the candidate stays so the agent can retry; refresh to unfreeze
+				updateModalUi();
+
+				// 5. tell the agent why it failed
+				notifyToast({
+					type: "error",
+					text: error.errorMessage ?? "failed to save the result",
+					timeoutMs: 6000,
+				});
+			},
+		});
 	});
 };
 

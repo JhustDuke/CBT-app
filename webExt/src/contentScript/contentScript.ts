@@ -16,6 +16,7 @@ import {
 } from "../utils";
 
 import { showActionButton, actionModalStore } from "./actionBtnAndModal";
+import { formPopulationFactory } from "./formPopulation/populateForm";
 
 const cs = oneTimeMsgFactory("cs");
 
@@ -24,6 +25,7 @@ const cs = oneTimeMsgFactory("cs");
 const ContentScript = function () {
 	const renderer = createRenderer();
 	const cleanup = createCleanup();
+	const formPopulation = formPopulationFactory();
 
 	const handleMessage = function (message: ExtensionMessageInterface) {
 		switch (message.type) {
@@ -42,13 +44,15 @@ const ContentScript = function () {
 
 			default:
 				throw new Error(
-					`cs has no handler for this message type: ${message.type}`
+					`cs has no handler for this message type: "${message.type}"`
 				);
 		}
 	};
 
 	const start = function () {
 		cleanup.run();
+
+		formPopulation.registerFormPopulationListener();
 
 		cs.onMessageAsync({
 			onAsyncCb: handleMessage,
