@@ -1,7 +1,7 @@
 import modalTemplate from "./modal.html?raw";
 import { oneTimeMsgFactory } from "xtension-messenger";
 import { actionModalStore } from "./";
-import { notifyToast, messageType } from "../../utils";
+import { notifyToast, messageType, cleanupAll } from "../../utils";
 
 // every id used by the modal, so none are typed by hand elsewhere
 const modalIds = {
@@ -62,20 +62,9 @@ const renderCurrentRecord = function (): void {
 	if (nextButton) nextButton.disabled = !actionModalStore.hasNextRecord();
 };
 
-// removes Auxie's population pills and clears the fields they populated
+// removes all form population pills
 const removePills = function (): void {
-	document.querySelectorAll(".ext-pill").forEach(function (pill) {
-		const previousElement = pill.previousElementSibling;
-
-		if (
-			previousElement instanceof HTMLInputElement ||
-			previousElement instanceof HTMLSelectElement
-		) {
-			previousElement.value = "";
-		}
-
-		pill.remove();
-	});
+	cleanupAll(".ext-pill");
 };
 
 // shows the reason input only for error status; submit stays disabled until the reason is long enough
