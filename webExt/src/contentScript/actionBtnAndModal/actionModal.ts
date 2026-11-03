@@ -65,6 +65,9 @@ const renderCurrentRecord = function (): void {
 // removes all form population pills
 const removePills = function (): void {
 	cleanupAll(".ext-pill");
+	document.querySelectorAll(".ext-pill-err").forEach(function (elem) {
+		elem.classList.remove("ext-pill-err");
+	});
 };
 
 // shows the reason input only for error status; submit stays disabled until the reason is long enough

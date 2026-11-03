@@ -1,26 +1,40 @@
 import { actionModalStore } from "../actionBtnAndModal";
 import { addElemToDom } from "../../utils";
 
+interface PillConfigInterface {
+	elem: HTMLInputElement | HTMLSelectElement;
+	value: string;
+	text: string;
+	className?: string;
+	setElementValue?: boolean;
+}
+
 // Handles the actual form population methods.
 const formMethodsFactory = function () {
-	const createPill = function (
-		elem: HTMLInputElement | HTMLSelectElement,
-		value: string,
-		pillText: string
-	): void {
+	const createPill = function (config: PillConfigInterface): void {
+		const {
+			elem,
+			value,
+			text,
+			className = "ext-pill red lighten-3",
+			setElementValue = true,
+		} = config;
+
 		if (!value) return;
 
 		// Prevent duplicate pills for this particular element.
 		if (elem.nextElementSibling?.classList.contains("ext-pill")) return;
 
-		elem.value = value;
+		if (setElementValue) {
+			elem.value = value;
+		}
 
 		addElemToDom({
 			parentElem: elem.parentElement || document.body,
 			typeOfElem: "button",
-			textContent: pillText,
+			textContent: text,
 			elemAttributes: {
-				class: "ext-pill red lighten-3",
+				class: className,
 				type: "button",
 			},
 			pluginFunc: function (parent, pill) {
@@ -42,17 +56,29 @@ const formMethodsFactory = function () {
 		const placeholder = input.placeholder.toLowerCase();
 
 		if (placeholder.includes("full name") && activeRecord.fullName) {
-			createPill(input, activeRecord.fullName, "Full Name");
+			createPill({
+				elem: input,
+				value: activeRecord.fullName,
+				text: "Full Name",
+			});
 			return;
 		}
 
 		if (placeholder.includes("email") && activeRecord.email) {
-			createPill(input, activeRecord.email, "Email");
+			createPill({
+				elem: input,
+				value: activeRecord.email,
+				text: "Email",
+			});
 			return;
 		}
 
 		if (placeholder.includes("phone") && activeRecord.phone) {
-			createPill(input, activeRecord.phone, "Phone");
+			createPill({
+				elem: input,
+				value: activeRecord.phone,
+				text: "Phone",
+			});
 		}
 	};
 
@@ -63,17 +89,36 @@ const formMethodsFactory = function () {
 
 		const receivedCourse = activeRecord.course?.trim().toLowerCase();
 
+		if (!receivedCourse) return;
+
 		const matchingOption = Array.from(select.options).find(function (option) {
 			return option.value.trim().toLowerCase() === receivedCourse;
 		});
 
 		if (!matchingOption) {
 			select.style.borderColor = "red";
+			select.classList.add("ext-pill-err");
+
+			createPill({
+				elem: select,
+				value: receivedCourse,
+				text: `Not matched: ${activeRecord.course}`,
+				className: "ext-pill-err ext-pill",
+				setElementValue: false,
+			});
+
 			return;
 		}
 
-		select.value = matchingOption.value;
 		select.style.borderColor = "green";
+		select.classList.remove("ext-pill-err");
+
+		createPill({
+			elem: select,
+			value: matchingOption.value,
+			text: "Course",
+			className: "ext-pill green lighten-3",
+		});
 	};
 
 	return {
