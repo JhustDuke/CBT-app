@@ -79,6 +79,15 @@ const formMethodsFactory = function () {
 				value: activeRecord.phone,
 				text: "Phone",
 			});
+			return;
+		}
+
+		if (placeholder.includes("nin") && activeRecord.nin) {
+			createPill({
+				elem: input,
+				value: activeRecord.nin,
+				text: "NIN",
+			});
 		}
 	};
 
