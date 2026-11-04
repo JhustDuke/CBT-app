@@ -3,8 +3,7 @@ export interface FormDataInterface {
 	email: string;
 	phone: string;
 	course: string;
-	imageFileHash: string;
-	imageFile: any;
+	nin: string;
 }
 export interface UpdateEnrolStatusPayloadInterface {
 	phoneNumber: string;

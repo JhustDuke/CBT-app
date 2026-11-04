@@ -1,16 +1,17 @@
 import modalTemplate from "./modal.html?raw";
 import { oneTimeMsgFactory } from "xtension-messenger";
 import { actionModalStore } from "./";
-import { notifyToast, messageType, cleanupAll } from "../../utils";
+import { notifyToast, messageType } from "../../utils";
 
 // every id used by the modal, so none are typed by hand elsewhere
 const modalIds = {
 	host: "ext-actionModal-host",
 	overlay: "ext-actionModal",
 	card: "ext-actionModalCard",
-	passportImage: "ext-passportImage",
+	candidateName: "ext-candidateName",
+	candidatePhone: "ext-candidatePhone",
+	candidateNin: "ext-candidateNin",
 	enrolCounter: "ext-enrolCounter",
-	downloadImageButton: "modalDownloadBtn",
 	statusSelect: "ext-statusSelect",
 	errorReasonInput: "ext-errorReason",
 	errorReasonText: "errorText",
@@ -32,16 +33,32 @@ const renderCurrentRecord = function (): void {
 	const currentRecord = actionModalStore.getCurrentRecord();
 	if (currentRecord === null) return;
 
+	const candidateNameElement = document.getElementById(modalIds.candidateName);
+	const candidatePhoneElement = document.getElementById(
+		modalIds.candidatePhone
+	);
+	const candidateNinElement = document.getElementById(modalIds.candidateNin);
 	const enrolCounterElement = document.getElementById(modalIds.enrolCounter);
-	const passportImageElement = document.getElementById(
-		modalIds.passportImage
-	) as HTMLImageElement | null;
+
 	const previousButton = document.getElementById(
 		modalIds.previousButton
 	) as HTMLButtonElement | null;
 	const nextButton = document.getElementById(
 		modalIds.nextButton
 	) as HTMLButtonElement | null;
+
+	// candidate information
+	if (candidateNameElement) {
+		candidateNameElement.textContent = "Name: " + currentRecord.fullName;
+	}
+
+	if (candidatePhoneElement) {
+		candidatePhoneElement.textContent = "Phone Number: " + currentRecord.phone;
+	}
+
+	if (candidateNinElement) {
+		candidateNinElement.textContent = "NIN: " + currentRecord.nin;
+	}
 
 	// counter e.g. "2 of 3"
 	if (enrolCounterElement) {
@@ -51,12 +68,6 @@ const renderCurrentRecord = function (): void {
 			actionModalStore.getTotalRecords();
 	}
 
-	// placeholder image for now, seeded by phone so each candidate gets a different one
-	if (passportImageElement) {
-		passportImageElement.src =
-			"https://picsum.photos/seed/" + currentRecord.phone + "/200/250";
-	}
-
 	if (previousButton)
 		previousButton.disabled = !actionModalStore.hasPreviousRecord();
 	if (nextButton) nextButton.disabled = !actionModalStore.hasNextRecord();
@@ -64,7 +75,19 @@ const renderCurrentRecord = function (): void {
 
 // removes all form population pills
 const removePills = function (): void {
-	cleanupAll(".ext-pill");
+	document.querySelectorAll(".ext-pill").forEach(function (pill) {
+		const boundElement = pill.previousElementSibling as
+			| HTMLInputElement
+			| HTMLSelectElement
+			| null;
+
+		if (boundElement) {
+			boundElement.value = "";
+		}
+
+		pill.remove();
+	});
+
 	document.querySelectorAll(".ext-pill-err").forEach(function (elem) {
 		elem.classList.remove("ext-pill-err");
 	});
@@ -240,6 +263,9 @@ const registerModalEvents = function (modalElement: HTMLElement): void {
 
 				// 6. refresh the modal, this also unfreezes it
 				updateModalUi();
+
+				//clear the pills from the ui
+				removePills();
 
 				// 7. that was the last candidate, so hide the modal
 				if (actionModalStore.getTotalRecords() === 0) {

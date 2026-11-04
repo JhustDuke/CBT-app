@@ -64,12 +64,8 @@ function requestRecordsFromApi(): Promise<FormDataInterface[]> {
 					fullName: "Test Candidate " + recordNumber,
 					email: "candidate" + recordNumber + "@example.com",
 					phone: "0900000000" + recordNumber,
-					course: "Computer Science",
-
-					imageFileHash: "fakehash" + recordNumber,
-					// tiny 1x1 placeholder image as base64
-					imageFile:
-						"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+					course: "Law",
+					nin: "67898789098",
 				});
 			}
 
