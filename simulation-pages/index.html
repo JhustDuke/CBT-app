@@ -9,10 +9,13 @@
 		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 	</head>
 	<body class="bg-gray-100">
+		<!-- ==================== HEADER ==================== -->
 		<header class="bg-gray-900 p-5 text-white">
 			<div
 				class="mx-auto flex max-w-6xl flex-col justify-between gap-4 sm:flex-row sm:items-center">
 				<h1 class="text-2xl font-bold">CBT App</h1>
+
+				<!-- nav links -->
 				<nav class="flex flex-wrap gap-3">
 					<a
 						href="./index.html"
@@ -28,15 +31,18 @@
 			</div>
 		</header>
 
+		<!-- ==================== MAIN ==================== -->
 		<main class="mx-auto max-w-3xl p-4">
 			<section class="rounded-lg bg-white p-6 shadow">
 				<h2 class="mb-6 text-center text-xl font-bold uppercase">
 					Enrolment Form
 				</h2>
 
+				<!-- ==================== ENROLMENT FORM ==================== -->
 				<form
 					id="form"
 					class="space-y-4">
+					<!-- nin field -->
 					<div>
 						<label
 							for="nin"
@@ -51,6 +57,7 @@
 							class="w-full rounded border p-2" />
 					</div>
 
+					<!-- full name field -->
 					<div>
 						<label
 							for="fullName"
@@ -65,6 +72,7 @@
 							class="w-full rounded border p-2" />
 					</div>
 
+					<!-- email field -->
 					<div>
 						<label
 							for="email"
@@ -79,6 +87,7 @@
 							class="w-full rounded border p-2" />
 					</div>
 
+					<!-- phone number field -->
 					<div>
 						<label
 							for="phone"
@@ -93,6 +102,7 @@
 							class="w-full rounded border p-2" />
 					</div>
 
+					<!-- course field -->
 					<div>
 						<label
 							for="course"
@@ -116,6 +126,7 @@
 						</select>
 					</div>
 
+					<!-- submit button -->
 					<button
 						type="submit"
 						class="w-full rounded bg-blue-600 p-3 text-white hover:bg-blue-700">
@@ -125,6 +136,58 @@
 			</section>
 		</main>
 
+		<!-- ==================== FLOATING CHECK STATUS BUTTON (opens the status modal via JS) ==================== -->
+		<button
+			id="toggleModalBtn"
+			type="button"
+			class="fixed top-145 right-6 z-20 rounded-full bg-black px-5 py-3 font-semibold text-white shadow-lg hover:bg-gray-800">
+			Check Status
+		</button>
+
+		<!-- ==================== STATUS MODAL ==================== -->
+		<div
+			id="statusModal"
+			class="fixed inset-0 z-30 hidden items-center justify-center bg-black/50 p-4">
+			<div class="w-full max-w-md rounded-lg bg-white p-6 shadow">
+				<!-- modal header + close button -->
+				<div class="mb-4 flex items-center justify-between">
+					<h2 class="text-lg font-bold">Check Status</h2>
+					<button
+						id="closeModalBtn"
+						type="button"
+						class="text-xl">
+						&times;
+					</button>
+				</div>
+
+				<!-- phone number input for status lookup -->
+				<input
+					id="candidatePhone"
+					type="tel"
+					placeholder="Enter phone number"
+					class="mb-3 w-full rounded border p-2" />
+
+				<!-- check button -->
+				<button
+					id="checkStatusBtn"
+					type="button"
+					class="mb-3 w-full rounded bg-blue-600 p-2 text-white hover:bg-blue-700">
+					Check
+				</button>
+
+				<!-- status result message -->
+				<p
+					id="statusPlaceholder"
+					class="mb-4 text-sm">
+					click the button to check
+				</p>
+
+				<!-- recent registrations list (filled by TS) -->
+				<div id="storedPhones"></div>
+			</div>
+		</div>
+
+		<!-- ==================== SCRIPT ==================== -->
 		<script
 			type="module"
 			src="/src/main.ts"></script>
