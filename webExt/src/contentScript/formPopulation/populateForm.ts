@@ -16,7 +16,7 @@ const formMethodsFactory = function () {
 			elem,
 			value,
 			text,
-			className = "ext-pill red lighten-3",
+			className = "ext-pill",
 			setElementValue = true,
 		} = config;
 
