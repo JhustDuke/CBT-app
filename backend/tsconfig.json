@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"target": "ES2022", // modern Node support
+		"module": "CommonJS", // Hapi uses CommonJS
+		"types": ["node", "vitest/globals", "@types/hapi"],
+		"lib": ["ES2022"], // ES features
+		"strict": true, // strict type checks
+		"esModuleInterop": true, // import commonjs modules cleanly
+		"forceConsistentCasingInFileNames": true,
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"outDir": "dist", // compiled JS output
+		"rootDir": "src",
+		"skipLibCheck": true
+	},
+	"include": ["src/**/*.ts", "test/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
+}
