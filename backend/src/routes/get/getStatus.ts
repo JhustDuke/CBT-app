@@ -6,15 +6,15 @@ export const getEnrolStatusRoute: ServerRoute = {
 	options: {
 		cors: {
 			origin: ["*"],
-			headers: ["Content-Type", "application/json"],
+			headers: ["Content-Type"],
 		},
 	},
-	path: "/checkEnrolStatus",
+	path: "/enrolment-status",
 	method: "GET",
-	handler: checkEnrolStatusEnrolStatusHandler,
+	handler: checkEnrolStatusHandler,
 };
 
-export async function checkEnrolStatusEnrolStatusHandler(
+export async function checkEnrolStatusHandler(
 	req: Request,
 	res: ResponseToolkit
 ) {
@@ -26,11 +26,16 @@ export async function checkEnrolStatusEnrolStatusHandler(
 			.code(400);
 	}
 
-	const status = await model_getEnrolStatus(candidatePhoneNumber);
+	try {
+		const status = await model_getEnrolStatus(candidatePhoneNumber);
 
-	if (!status) {
-		return res.response({ message: "Status not found" }).code(404);
+		if (!status) {
+			return res.response({ message: "data not found" }).code(404);
+		}
+
+		return res.response(status).code(200);
+	} catch (err: any) {
+		console.error("❌ Failed to get enrol status:", err.message);
+		return res.response({ message: "Failed to get enrol status" }).code(500);
 	}
-
-	return res.response(status).code(200);
 }
