@@ -14,7 +14,8 @@ export const model_getEnrolStatus = async function (
 	const conn = await pool.connect();
 
 	const query = `
-			SELECT  registration_status, registration_message
+			SELECT  registration_status AS "registrationStatus",
+			        registration_message AS "registrationMessage"
 			FROM enrolment_Table
 			WHERE phoneNumber = $1
 			LIMIT 1
