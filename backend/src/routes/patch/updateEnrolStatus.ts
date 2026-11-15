@@ -4,7 +4,7 @@ import { UpdateEnrolStatusInterface } from "../../interfaces";
 import { validateUpdatePayload } from "../../utils";
 
 export const updateEnrolStatusRoute: ServerRoute = {
-	path: "/updateEnrolStatus",
+	path: "/update-status",
 	method: "PATCH",
 	options: {
 		cors: {

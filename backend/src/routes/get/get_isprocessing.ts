@@ -3,7 +3,7 @@ import { model_isProcessing } from "../../models";
 
 /* ===================== GET ===================== */
 export const getEnrolDataRoute: ServerRoute = {
-	path: "/getEnrolData",
+	path: "/is-processing",
 	method: "GET",
 	options: {
 		cors: {
@@ -11,10 +11,13 @@ export const getEnrolDataRoute: ServerRoute = {
 			headers: ["Content-Type", "application/json"],
 		},
 	},
-	handler: getEnrolDataHandler,
+	handler: getIsProcessingDataHandlder,
 };
 
-export async function getEnrolDataHandler(req: Request, res: ResponseToolkit) {
+export async function getIsProcessingDataHandlder(
+	req: Request,
+	res: ResponseToolkit
+) {
 	try {
 		const toBeProcessedData = await model_isProcessing();
 
