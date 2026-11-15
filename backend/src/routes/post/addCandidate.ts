@@ -16,7 +16,7 @@ export const enrolRoute: ServerRoute = {
 		},
 		cors: {
 			origin: ["*"],
-			headers: ["Content-Type", "application/json"],
+			headers: ["Content-Type"],
 		},
 	},
 	handler: enrolHandler,

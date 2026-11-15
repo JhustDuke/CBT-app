@@ -9,7 +9,7 @@ export const updateEnrolStatusRoute: ServerRoute = {
 	options: {
 		cors: {
 			origin: ["*"],
-			headers: ["Content-Type", "application/json"],
+			headers: ["Content-Type"],
 		},
 	},
 	handler: updateEnrolStatusHandler,
