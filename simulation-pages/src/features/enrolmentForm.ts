@@ -1,4 +1,4 @@
-import { BASE_URL, ENROL_CANDIDATE_PATH } from "../../endpoints";
+import { BASE_URL, ENROL_CANDIDATE_PATH } from "../../../endpoints";
 import { storePhone } from "../localStorage";
 import { isValidNin, isValidPhone } from "../validation";
 import { renderStoredPhones } from "./statusModal";

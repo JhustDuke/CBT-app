@@ -1,4 +1,4 @@
-import { BASE_URL, ENROLMENT_STATUS_PATH } from "../../endpoints";
+import { BASE_URL, ENROLMENT_STATUS_PATH } from "../../../endpoints";
 import { getStoredPhones, clearStoredPhones } from "../localStorage";
 import { isValidPhone } from "../validation";
 
