@@ -15,7 +15,7 @@ export const model_getEnrolStatus = async function (
 
 	const query = `
 			SELECT  registration_status, registration_message
-			FROM ${enrolDB}
+			FROM enrolment_Table
 			WHERE phoneNumber = $1
 			LIMIT 1
 	`;
