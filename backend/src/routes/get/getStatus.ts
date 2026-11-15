@@ -1,7 +1,6 @@
 import { Request, ResponseToolkit, ServerRoute } from "@hapi/hapi";
 import { model_getEnrolStatus } from "../../models";
 
-/* ===================== GET ===================== */
 export const getEnrolStatusRoute: ServerRoute = {
 	options: {
 		cors: {
@@ -18,9 +17,12 @@ export async function checkEnrolStatusHandler(
 	req: Request,
 	res: ResponseToolkit
 ) {
-	const candidatePhoneNumber: number = Number(req.query.candidatePhoneNumber);
+	//kept as a string so the leading zero stays e.g. "08012345678"
+	const candidatePhoneNumber: string = String(
+		req.query.candidatePhoneNumber || ""
+	);
 
-	if (!candidatePhoneNumber || Number.isNaN(candidatePhoneNumber)) {
+	if (!candidatePhoneNumber) {
 		return res
 			.response({ message: "candidate phone number is required" })
 			.code(400);
