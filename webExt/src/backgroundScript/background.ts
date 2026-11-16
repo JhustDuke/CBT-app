@@ -1,5 +1,10 @@
 import { oneTimeMsgFactory } from "xtension-messenger";
 import { ExtensionMessageInterface } from "xtension-messenger/dist/types/interfaces";
+import {
+	BASE_URL,
+	GET_PROCESSING_PATH,
+	UPDATE_STATUS_PATH,
+} from "../../../endpoints";
 
 import { FormDataInterface } from "../interfaces";
 import { messageType } from "../utils";
@@ -11,6 +16,15 @@ interface ResultToReportInterface {
 	phone: string;
 	status: string;
 	errorReason: string;
+}
+
+// one row as the backend sends it
+interface BackendCandidateRowInterface {
+	fullName: string;
+	email: string;
+	phoneNumber: string;
+	course: string;
+	nin: string;
 }
 
 // Central app
@@ -52,43 +66,65 @@ const bgScript = function () {
 
 bgScript().startListening();
 
-// fake records until the real api request is wired in
-function requestRecordsFromApi(): Promise<FormDataInterface[]> {
-	return new Promise(function (resolve) {
-		// 3 second delay mimics the real request
-		setTimeout(function () {
-			const fakeRecords: FormDataInterface[] = [];
+// backend row e.g. { phoneNumber: "08012345678" } becomes the cs record shape { phone: "08012345678" }
+const convertBackendRowsToFormRecords = function (
+	backendRows: BackendCandidateRowInterface[]
+): FormDataInterface[] {
+	const formRecords: FormDataInterface[] = [];
 
-			for (let recordNumber = 1; recordNumber <= 3; recordNumber++) {
-				fakeRecords.push({
-					fullName: "Test Candidate " + recordNumber,
-					email: "candidate" + recordNumber + "@example.com",
-					phone: "0900000000" + recordNumber,
-					course: "Law",
-					nin: "67898789098",
-				});
-			}
+	for (let rowIndex = 0; rowIndex < backendRows.length; rowIndex++) {
+		const backendRow = backendRows[rowIndex];
 
-			resolve(fakeRecords);
-		}, 3000);
-	});
-}
+		formRecords.push({
+			fullName: backendRow.fullName,
+			email: backendRow.email,
+			phone: backendRow.phoneNumber,
+			course: backendRow.course,
+			nin: backendRow.nin,
+		});
+	}
 
-// fake save until the real api request is wired in; error status mimics a failed save
-function saveResultToApi(
+	return formRecords;
+};
+
+const requestRecordsFromApi = async function (): Promise<FormDataInterface[]> {
+	const response = await fetch(BASE_URL + GET_PROCESSING_PATH);
+	const responseBody = await response.json();
+
+	if (!response.ok) {
+		throw new Error(responseBody.message);
+	}
+
+	return convertBackendRowsToFormRecords(responseBody);
+};
+
+const saveResultToApi = async function (
 	resultToReport: ResultToReportInterface
 ): Promise<boolean> {
-	return new Promise(function (resolve, reject) {
-		// 3 second delay mimics the real request
-		setTimeout(function () {
-			if (resultToReport.status === "error") {
-				reject(new Error("mock bg failed to save the result"));
-				return;
-			}
-			resolve(true);
-		}, 3000);
+	//modal status e.g. "error" becomes the backend's ERROR, anything else becomes COMPLETED
+	const registrationStatus =
+		resultToReport.status.toLowerCase() === "error" ? "ERROR" : "COMPLETED";
+
+	const response = await fetch(BASE_URL + UPDATE_STATUS_PATH, {
+		method: "PATCH",
+		headers: { "Content-Type": "application/json" },
+		//backend only wants a message when the status is ERROR (undefined is dropped from the json)
+		body: JSON.stringify({
+			phoneNumber: resultToReport.phone,
+			registrationStatus,
+			registrationMessage:
+				registrationStatus === "ERROR" ? resultToReport.errorReason : undefined,
+		}),
 	});
-}
+
+	const responseBody = await response.json();
+
+	if (!response.ok) {
+		throw new Error(responseBody.message);
+	}
+
+	return true;
+};
 
 function sendDataToCS(receivedRecords: FormDataInterface[]) {
 	return new Promise(function (resolve) {

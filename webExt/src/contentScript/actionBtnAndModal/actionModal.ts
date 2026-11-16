@@ -219,7 +219,7 @@ const registerModalEvents = function (modalElement: HTMLElement): void {
 			errorReason: errorReasonInputElement.value.trim(),
 		};
 
-		const BG_REPLY_TIMEOUT_MS = 15000;
+		const BG_REPLY_TIMEOUT_MS = 60000;
 
 		// safety net: if bg never replies, end the wait the same way an error does
 		const replyTimeoutId = setTimeout(function () {

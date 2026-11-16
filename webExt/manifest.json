@@ -1,6 +1,6 @@
 {
 	"manifest_version": 3,
-	"name": "auxie-cbt",
+	"name": "cbt-app",
 	"version": "1.0",
 	"description": "A JAMB's portal CBTs' helper",
 	"permissions": [
@@ -10,6 +10,8 @@
 		"downloads",
 		"downloads.open"
 	],
+
+	"host_permissions": ["https://cbt-app-backend.onrender.com/*"],
 
 	"background": {
 		"scripts": ["dist/background.js"],
@@ -42,7 +44,7 @@
 	},
 	"browser_specific_settings": {
 		"gecko": {
-			"id": "auxie-cbt@dukelchike31",
+			"id": "cbt-app@dukelchike31",
 			"data_collection_permissions": {
 				"required": ["none"]
 			}
