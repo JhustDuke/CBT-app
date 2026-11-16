@@ -69,16 +69,7 @@ export function validatePayloadPhoneNumber(phoneNumber?: string) {
 // Update-specific validation
 // -------------------------
 export function validateUpdatePayload(payload: UpdateEnrolStatusInterface) {
-	// @ts-ignore
 	payload.phoneNumber = validatePayloadPhoneNumber(payload.phoneNumber);
-
-	// registrationMessage
-	if (payload.registrationMessage) {
-		payload.registrationMessage = sanitizeStringField(
-			payload.registrationMessage,
-			"registrationMessage"
-		);
-	}
 
 	// Enum validation
 	const validStatuses = ["ERROR", "COMPLETED"];

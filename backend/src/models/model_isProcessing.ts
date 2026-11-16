@@ -10,7 +10,9 @@ export const model_isProcessing = async function (pool = appPool) {
 
 	const selectQuery = `
 		SELECT 
-		course, fullName, registration_status, phoneNumber
+		course, fullName AS "fullName", email, nin,
+		registration_status AS "registrationStatus",
+		phoneNumber AS "phoneNumber"
 		FROM enrolment_Table
 		WHERE registration_status = 'PROCESSING' 
 	`;
@@ -19,7 +21,9 @@ export const model_isProcessing = async function (pool = appPool) {
 		const { rows } = await conn.query(selectQuery);
 
 		if (!rows.length) {
-			throw new Error("database is empty");
+			throw new Error(
+				"no candidates are waiting to be processed,try again later"
+			);
 		}
 
 		return rows;
