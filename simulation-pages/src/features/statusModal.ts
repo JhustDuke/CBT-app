@@ -27,7 +27,7 @@ export function renderStoredPhones(): void {
 
 	const heading = document.createElement("div");
 	heading.className = "mb-2 font-bold";
-	heading.textContent = "Recent registrations";
+	heading.textContent = "Recent registrations:Double click to select";
 	statusModalElements.storedPhonesContainer.append(heading);
 
 	const storedPhones = getStoredPhones();
@@ -75,7 +75,14 @@ export function closeStatusModal(): void {
 }
 
 /* -------------------- CHECK STATUS -------------------- */
-const checkStatusRequest = async function (phone: string): Promise<string> {
+interface EnrolStatusResultInterface {
+	registrationStatus: string;
+	registrationMessage: string | null;
+}
+
+const checkStatusRequest = async function (
+	phone: string
+): Promise<EnrolStatusResultInterface> {
 	//query param name must match the route e.g. ?candidatePhoneNumber=08012345678
 	const response = await fetch(
 		BASE_URL +
@@ -90,7 +97,7 @@ const checkStatusRequest = async function (phone: string): Promise<string> {
 		throw new Error(responseBody.message);
 	}
 
-	return responseBody.registrationStatus;
+	return responseBody;
 };
 
 function showStatusMessage(message: string, color: string): void {
@@ -112,8 +119,23 @@ export const handleCheckStatusClick = async function (): Promise<void> {
 	showStatusMessage("Checking...", "orange");
 
 	try {
-		const registrationStatus = await checkStatusRequest(phone);
-		showStatusMessage(`Status for ${phone}: ${registrationStatus}`, "green");
+		const statusResult = await checkStatusRequest(phone);
+
+		//an ERROR candidate shows the agent's reason instead of just the word
+		if (statusResult.registrationStatus === "ERROR") {
+			showStatusMessage(
+				`Status for ${phone}: ERROR - ${
+					statusResult.registrationMessage ?? "no reason given"
+				}`,
+				"red"
+			);
+			return;
+		}
+
+		showStatusMessage(
+			`Status for ${phone}: ${statusResult.registrationStatus}`,
+			"green"
+		);
 	} catch (error) {
 		showStatusMessage(
 			error instanceof Error ? error.message : "Failed to check status.",
